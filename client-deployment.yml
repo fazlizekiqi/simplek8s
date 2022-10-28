@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  # Name of the deployment object
+  name: client-deployment
+
+spec: 
+  # Specify the number of Pods that this deployment will create. 
+  # All the number of pods that are going to get created are going
+  # be identical in nature.
+  replicas: 1
+  # Essentially it does kind of the same thing as the 'selector' in the 
+  #  service(client-node-port.yml). 
+  # When a deployment creates a Pod, it doesnt directly create the Pod 
+  # itself and maintain it. 
+  # Instead, the Deployment object reaches out to the Kubernetes API on the master
+  # and says: "Hey master, i need you to create a Pod for me and heres the configuration
+  # for it".
+  # Note! It is the master(one of the four programs in master) that
+  # is creating the Pod for us. 
+  # So, after the Pod is created, the Deployment somehow needs to get
+  # a hndle on the Pod that is created. 
+  # And this is the purpose of the selector field.
+  # Selector it will basically look for a Pod 
+  # that has the label the same as the one in 'matchLabels'
+  selector:
+    matchLabels:
+      component: web
+  # Inside the tempalte we are listing the configuration that is going to be
+  # used for every single Pod that is created by this deployment
+  template:
+    metadata:
+      labels:
+        component: web
+    spec: 
+      containers:
+        - name: client
+          image: fazlizekiqi/multi-client
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000

@@ -1,0 +1,45 @@
+# When we specify apiVersion at the top of the file, it means that this will essentially scope or limit the types of objects that we can 
+# specify that we want to create within any given configuration file.
+# apiVersion: v1 open up access to us to a predefined set of different objects types.
+# When designating "apiVersion: v1" we can create an object of type:
+# - componentStatus
+# - configMap
+# - Endpoints
+# - Event
+# - Namespace
+# - Pod etc
+# If we have used a different apiVersion for instance apiVersion: apps/v1 we get access to different object types:
+# - ControllerRevision
+# - StatefulSet 
+# Each  apiVersion defined a different set of 'objects' that we can use. 
+apiVersion: v1
+# When we run 'minukube start' it is goign to create  a virtual machine on our local machines. We refer to that virtual machine as Node. 
+# This node is going to get used by Kubernetes to run some number of different objects   such as a Pod object.
+# With Kubernetes we cannot deploy for instance one single container just like we do with Dockerfile or Docker-compose. 
+# In order to deploy containers with Kubernetes we need to create one Kubernetes object. 
+# And the easiest way to deploy a single container with Kubernetes is by creating a Pod object,
+# A Pod object is used to run a container or a group of containers that are tightly coupled with each other
+# i.e container that depends on another container.
+# So, Pod itself is essentially a grouping of containers with a very similar purpose. Containers that absolutely needs to be deployed and run together
+# in order for an application to work correctly.
+kind: Pod
+metadata:
+  # Name in the meta-data is pretty much what we can expect. It is going to be the name of the pod and this name will be visible
+  # when we see logs. 
+  name: client-pod
+  # The label is used from other Kubernetes object(other config files) to refer to this.
+  # In Kubernetes in order to refer to another object we dont use the name of the object. 
+  # Kubernetes uses a system called the Label Selector System.
+  # One thing to note here is that the label are key value pairs and they can be named whatever we like. 
+  # It can be for instance "tier:frontend" instead of "component:web". 
+  # 
+  labels:
+    component: web
+spec:
+  containers: 
+  # Containers name. If we were running multiple containers in this Pod object we could easily refer to this name just like we do when 
+  # running multiple containers with Docker. 
+    - name: client
+      image: stephengrider/multi-worker
+      ports: 
+        - containerPort: 9999

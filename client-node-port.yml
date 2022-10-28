@@ -1,0 +1,39 @@
+apiVersion: v1
+# A Service object is going to set up some networking in the Kubernetes cluster.
+# We use this object type anytime we want to set up networking in a Kubernetes Cluster.
+# In the world of Servies there are 4 subtypes:
+# - ClusterIP
+# - NodePort
+# - LoadBalancer
+# - Ingress
+# So, as we can see in this file we defined the Kubernetes object type to Service and then in the spec type we defined NodePort as a sub-service. 
+# Essentially we are making a NodePort service.
+kind: Service
+metadata:
+  name: client-node-port
+spec:
+  # The purpose of a NodePort service is to expose a container to the outside world or in other words it is used to be able to allow us
+  # as developers to open up our web-browser and access that running container.
+  # NodePort service is mainly used for development purposes and we do not used NodePort inside of production environments outside of 
+  # one or two very specific execptions.
+  type: NodePort
+  # When the service boots up, its going to look first for the label in order to know where to forward the traffic to.
+  # (i.e the incoming request from the browser) 
+  ports:
+      # The port property is going to be the port that another Pod or another container inside of our application could access
+      # in order to get access to multi-client Pod. 
+    - port: 3050
+      # Target port is the port of that pod that we want to open up traffic to. 
+      # So, we are basically saying that forward all the incoming traffic to the port of this Pod. 
+      targetPort: 3000
+      # Node port is the port that we need to care the most whenver we make use of a NodePort sub-service.
+      # NodePort is the one that we can put it in our browser and access our multi-client application. 
+      nodePort: 31515
+  # As mentioned in the client nod. Kubernetes uses a system call Label Selector System that we can refer to a specifc label
+  # from other config files/kubernetes object.
+  # And this is how this two objects (Service and Pod) object are linked together.
+  # Since the key value pair of the Pod label is "component: web" we need to specify them here as well. 
+  # As mentioned in the Pod object. This key value pair can be name whatever we want.
+  # The only important thing is that they need to match with each other when trying to link them as we are doing here.
+  selector: 
+    component: web
